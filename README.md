@@ -1,5 +1,4 @@
 # testapp
 
-##exe化
-
+##　exe化　　
 `pyinstaller 'ファイフ名.py' --onegile --noconsole`
