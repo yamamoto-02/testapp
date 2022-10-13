@@ -2,14 +2,32 @@ import tkinter as tk
 from tkinter import ttk
 import csv
 
+from matplotlib.transforms import composite_transform_factory
+
 window = tk.Tk()
 LabelFont  = ("Helevetice", 18)
 titleLabelFont  = ("Helevetice", 18)
 
 def changePage():
     page1()
-    
+
+def cp_return(event):
+    page1()
+
 def cp_date():
+    global date
+    global fieldnames
+    global w
+    date=int(date_input.get())
+    print(type(date))
+    print(date)
+    with open(str(date)+'.csv', 'w',newline='')as csv_file:
+        fieldnames=['客先名','記号','番号','全増加量','恒久増加量']
+        w=csv.DictWriter(csv_file,fieldnames=fieldnames)
+        w.writeheader()
+    page2()
+
+def cp_date_return(event):
     global date
     global fieldnames
     global w
@@ -27,6 +45,12 @@ def cp_name():
     name=str(name_input.get())
     print(name)
     page3()
+
+def cp_name_return(event):
+    global name
+    name=str(name_input.get())
+    print(name)
+    page3()
     
 def cp_codename():
     global code
@@ -36,9 +60,23 @@ def cp_codename():
     print(code)
     print(number)
     page4()
-    
+
+def cp_codename_return(event): 
+    global code
+    global number
+    code=str(code_input.get())
+    number=int(number_input.get())
+    print(code)
+    print(number)
+    page4()
     
 def cp_capacity():
+    global capacity
+    capacity=float(capacity_input.get())
+    print(capacity)
+    page5()
+
+def cp_capacity_return(event):
     global capacity
     capacity=float(capacity_input.get())
     print(capacity)
@@ -50,7 +88,20 @@ def cp_temp():
     print(temp)
     page6()
 
+def cp_temp_return(event):
+    global temp
+    temp=int(temp_input.get())
+    print(temp)
+    page6()
+
 def cp_amount():
+    global amount
+    amount=float(amount_input.get())
+    print(type(amount))
+    print(amount)
+    page7()
+
+def cp_amount_return(event):
     global amount
     amount=float(amount_input.get())
     print(type(amount))
@@ -64,8 +115,22 @@ def cp_increment():
     print(increment)
     calculation()
     page8()
+
+def cp_increment_return(event):
+    global increment
+    increment=float(increment_input.get())
+    print(type(increment))
+    print(increment)
+    calculation()
+    page8()
     
 def fin():
+    window.destroy()
+    with open(str(date)+'.csv','a',newline='') as f:
+        w=csv.DictWriter(f,fieldnames=fieldnames)
+        w.writerow({'客先名':name,'記号':code,'番号':number,'全増加量':total_increase,'恒久増加量':increment})
+
+def fin_return(event):
     window.destroy()
     with open(str(date)+'.csv','a',newline='') as f:
         w=csv.DictWriter(f,fieldnames=fieldnames)
@@ -82,6 +147,7 @@ def calculation():
     global result
     global total_increase
     global permanent_rate_increase
+    global pri
     f_list=[0.000505,0.000502,0.000498,0.000495,0.000492,0.000489,0.000486,0.000484,0.000482,0.000479,0.000477,0.000475,0.000474,0.000472,0.000470,0.000469,0.000467,0.000466,0.000465,0.000464,0.000462,0.000461,0.000460,0.000459,0.000458,0.000457,0.000456,0.000455,0.000455,0.000454,0.000453,0.000452,0.000451,0.000449,0.000448,0.000447,0.000446,0.000445,0.000443,0.000442]
     b=6
     p=3
@@ -94,6 +160,7 @@ def calculation():
     beta=f_list[num]
     total_increase=(a-b)-((a-b)+v)*p*beta
     permanent_rate_increase=(i/total_increase)*100
+    pri=round(permanent_rate_increase,2)
     print('リスト番号：%d'%num)
     print('全入水量：%d'%a)
     print('内容積：%d'%v)
@@ -102,6 +169,7 @@ def calculation():
     print(beta)
     print('全増加量：%f'%total_increase)
     print('恒久増加率：%f'%permanent_rate_increase)
+    print('率：%f'%pri)
     if permanent_rate_increase < 10:
         result='合格'
     else:
@@ -135,12 +203,11 @@ def page1():
     date = tk.Entry()
     dateEntry = ttk.Entry(frame, textvariable=date, width=30,font= LabelFont)
     date_input=dateEntry
-    
     dateEntry.grid(row=4, column=1) 
-
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_date())
     okButton.grid(row=5, column=3)
     Page1.grid(row=0, column=0, sticky="nsew")
+    window.bind('<Return>',cp_date_return)
 
 #inpupt customer name
 def page2():
@@ -178,6 +245,8 @@ def page2():
     okButton.grid(row=5, column=3)
 
     Page2.grid(row=0, column=0, sticky="nsew")
+
+    window.bind('<Return>',cp_name_return)
     
 #input container code and number
 def page3():
@@ -227,6 +296,8 @@ def page3():
     okButton.grid(row=5, column=3)
     Page3.grid(row=0, column=0, sticky="nsew")
 
+    window.bind('<Return>',cp_codename_return)
+
 #input capacity
 def page4():
     global capacity
@@ -259,6 +330,8 @@ def page4():
     okButton.grid(row=5, column=3)
 
     Page4.grid(row=0, column=0, sticky="nsew")
+
+    window.bind('<Return>',cp_capacity_return)
 
 #input water temperature
 def page5():
@@ -295,6 +368,8 @@ def page5():
     okButton.grid(row=5, column=3)
 
     Page5.grid(row=0, column=0, sticky="nsew")
+
+    window.bind('<Return>',cp_temp_return)
     
 #input total water inflow
 def page6():
@@ -338,6 +413,8 @@ def page6():
 
     Page6.grid(row=0, column=0, sticky="nsew")
 
+    window.bind('<Return>',cp_amount_return)
+
 #input permanent increase
 def page7():
     global increment
@@ -369,13 +446,15 @@ def page7():
  
     incrementEntry.grid(row=4, column=1)
 
-    return_Button = ttk.Button(frame, text="  戻る  ", command=lambda : cp_temp())
-    return_Button.grid(row=5, column=2)
+    # return_Button = ttk.Button(frame, text="  戻る  ", command=lambda : cp_temp())
+    # return_Button.grid(row=5, column=2)
 
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_increment())
     okButton.grid(row=5, column=3)
 
     Page7.grid(row=0, column=0, sticky="nsew")
+
+    window.bind('<Return>',cp_increment_return)
 
 #show result
 def page8():
@@ -401,8 +480,15 @@ def page8():
     for index in range(3):
         spaceLabel17[index].grid(row=index, column=0)
     rateLabel.grid(row=2, column=0)
-    output1=ttk.Label(frame, text=permanent_rate_increase,font=LabelFont)
-    output1.grid(row=2,column=1)
+    if pri > 0:
+        output1=ttk.Label(frame, text=pri,font=LabelFont)
+    else:
+        output1=ttk.Label(frame, text=0,font=LabelFont)
+
+    output1.grid(row=2,column=2)
+
+    per=ttk.Label(frame, text='%',font=LabelFont)
+    per.grid(row=2,column=3)
 
 
     resultLabelFont  = ("Helevetice", 18)
@@ -425,6 +511,8 @@ def page8():
 
     Page8.grid(row=0, column=0, sticky="nsew")
 
+    window.bind('<Return>',fin_return)
+
 def main() -> None:
     window.title("容器再検査")
 
@@ -446,8 +534,8 @@ def main() -> None:
         
     titleLabel.pack()
     startButton =\
-     ttk.Button(startPage, text="           開始           ", command=lambda : changePage())
-    
+    ttk.Button(startPage, text="           開始           ", command=lambda : changePage())
+    window.bind('<Return>',cp_return)
     for index in range(3):
         spaceLabel2[index].pack()
         
