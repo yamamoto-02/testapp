@@ -55,7 +55,8 @@ def cp_name_return(event):
 def cp_codename():
     global code
     global number
-    code=str(code_input.get())
+    c=str(code_input.get())
+    code=c.upper()
     number=int(number_input.get())
     print(code)
     print(number)
@@ -64,7 +65,8 @@ def cp_codename():
 def cp_codename_return(event): 
     global code
     global number
-    code=str(code_input.get())
+    c=str(code_input.get())
+    code=c.upper()
     number=int(number_input.get())
     print(code)
     print(number)
