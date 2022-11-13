@@ -1,12 +1,24 @@
 import tkinter as tk
 from tkinter import ttk
-import csv
+import openpyxl as op
 
 from matplotlib.transforms import composite_transform_factory
 
 window = tk.Tk()
 LabelFont  = ("Helevetice", 18)
 titleLabelFont  = ("Helevetice", 18)
+wb=op.load_workbook('Excel_Sheet.xlsx')
+
+
+def row_acquisition():
+    sheet = wb[date]
+    maxRow = sheet.max_row + 1
+    maxClm = sheet.max_column + 1
+    for j in range(1,maxClm):
+        if j == 2:
+            for i in reversed(range(1,maxRow)):
+                if sheet.cell(row=i, column=j).value != None:
+                    return i
 
 def changePage():
     page1()
@@ -18,39 +30,30 @@ def cp_date():
     global date
     global fieldnames
     global w
-    date=int(date_input.get())
+    d=str(date_input.get())
+    date = d
     print(type(date))
-    print(date)
-    with open(str(date)+'.csv', 'w',newline='')as csv_file:
-        fieldnames=['客先名','記号','番号','全増加量','恒久増加量']
-        w=csv.DictWriter(csv_file,fieldnames=fieldnames)
-        w.writeheader()
+    #print(date)
+    sheet_copy = wb.copy_worksheet(wb['Template'])
+    ws = wb.worksheets[-1]
+    ws.title=date
+    sheet = wb[date]
+    sheet['E3']= d[:4] + '年' + d[5:6] + '月' + d[7:8] + '日'
+    wb.save('Excel_Sheet.xlsx')
     page2()
 
 def cp_date_return(event):
-    global date
-    global fieldnames
-    global w
-    date=int(date_input.get())
-    print(type(date))
-    print(date)
-    with open(str(date)+'.csv', 'w',newline='')as csv_file:
-        fieldnames=['客先名','記号','番号','全増加量','恒久増加量']
-        w=csv.DictWriter(csv_file,fieldnames=fieldnames)
-        w.writeheader()
-    page2()
+    cp_date()
+    
 
 def cp_name():
     global name
     name=str(name_input.get())
-    print(name)
+    #print(name)
     page3()
 
 def cp_name_return(event):
-    global name
-    name=str(name_input.get())
-    print(name)
-    page3()
+    cp_name()
     
 def cp_codename():
     global code
@@ -58,90 +61,77 @@ def cp_codename():
     c=str(code_input.get())
     code=c.upper()
     number=int(number_input.get())
-    print(code)
-    print(number)
+    # print(code)
+    # print(number)
     page4()
 
 def cp_codename_return(event): 
-    global code
-    global number
-    c=str(code_input.get())
-    code=c.upper()
-    number=int(number_input.get())
-    print(code)
-    print(number)
-    page4()
+    cp_codename()
     
 def cp_capacity():
     global capacity
     capacity=float(capacity_input.get())
-    print(capacity)
+    # print(capacity)
     page5()
 
 def cp_capacity_return(event):
-    global capacity
-    capacity=float(capacity_input.get())
-    print(capacity)
-    page5()
+    cp_capacity()
     
 def cp_temp():
     global temp
     temp=int(temp_input.get())
-    print(temp)
+    # print(temp)
     page6()
 
 def cp_temp_return(event):
-    global temp
-    temp=int(temp_input.get())
-    print(temp)
-    page6()
+    cp_temp()
 
 def cp_amount():
     global amount
     amount=float(amount_input.get())
-    print(type(amount))
-    print(amount)
+    # print(type(amount))
+    # print(amount)
     page7()
 
 def cp_amount_return(event):
-    global amount
-    amount=float(amount_input.get())
-    print(type(amount))
-    print(amount)
-    page7()
+    cp_amount()
     
 def cp_increment():
     global increment
     increment=float(increment_input.get())
-    print(type(increment))
-    print(increment)
+    # print(type(increment))
+    # print(increment)
     calculation()
     page8()
 
 def cp_increment_return(event):
-    global increment
-    increment=float(increment_input.get())
-    print(type(increment))
-    print(increment)
-    calculation()
-    page8()
+    cp_increment()
     
 def fin():
     window.destroy()
-    with open(str(date)+'.csv','a',newline='') as f:
-        w=csv.DictWriter(f,fieldnames=fieldnames)
-        w.writerow({'客先名':name,'記号':code,'番号':number,'全増加量':total_increase,'恒久増加量':increment})
+    sheet = wb[date]
+    r = str(row_acquisition() + 1)
+    sheet['B' + r] = name
+    sheet['C' + r] = code
+    sheet['D' + r] = number
+    sheet['E' + r] = total_increase
+    sheet['F' + r] = increment
+    sheet['G' + r] = pri
+    wb.save('Excel_Sheet.xlsx')
 
 def fin_return(event):
-    window.destroy()
-    with open(str(date)+'.csv','a',newline='') as f:
-        w=csv.DictWriter(f,fieldnames=fieldnames)
-        w.writerow({'客先名':name,'記号':code,'番号':number,'全増加量':total_increase,'恒久増加量':increment})
+    fin()
         
 def add():
-    with open(str(date)+'.csv','a',newline='') as f:
-        w=csv.DictWriter(f,fieldnames=fieldnames)
-        w.writerow({'客先名':name,'記号':code,'番号':number,'全増加量':total_increase,'恒久増加量':increment})
+    sheet = wb[date]
+    r = str(row_acquisition() + 1)
+    sheet['B' + r] = name
+    sheet['C' + r] = code
+    sheet['D' + r] = number
+    sheet['E' + r] = total_increase
+    sheet['F' + r] = increment
+    sheet['G' + r] = pri
+    wb.save('Excel_Sheet.xlsx')
     page2()
     
     
@@ -163,15 +153,17 @@ def calculation():
     total_increase=(a-b)-((a-b)+v)*p*beta
     permanent_rate_increase=(i/total_increase)*100
     pri=round(permanent_rate_increase,2)
-    print('リスト番号：%d'%num)
-    print('全入水量：%d'%a)
-    print('内容積：%d'%v)
-    print('耐圧試験圧力：%d'%p)
-    print('水温：%d'%t)
-    print(beta)
-    print('全増加量：%f'%total_increase)
-    print('恒久増加率：%f'%permanent_rate_increase)
-    print('率：%f'%pri)
+    if pri < 0:
+        pri = 0
+    # print('リスト番号：%d'%num)
+    # print('全入水量：%d'%a)
+    # print('内容積：%d'%v)
+    # print('耐圧試験圧力：%d'%p)
+    # print('水温：%d'%t)
+    # print(beta)
+    # print('全増加量：%f'%total_increase)
+    # print('恒久増加率：%f'%permanent_rate_increase)
+    # print('率：%f'%pri)
     if permanent_rate_increase < 10:
         result='合格'
     else:
