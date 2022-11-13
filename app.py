@@ -38,7 +38,7 @@ def cp_date():
     ws = wb.worksheets[-1]
     ws.title=date
     sheet = wb[date]
-    sheet['E3']= d[:4] + '年' + d[5:6] + '月' + d[7:8] + '日'
+    sheet['E3']= d[:4] + '年' + d[4:6] + '月' + d[6:8] + '日'
     wb.save('Excel_Sheet.xlsx')
     page2()
 
