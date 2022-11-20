@@ -1,14 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
 import openpyxl as op
-
 from matplotlib.transforms import composite_transform_factory
 
 window = tk.Tk()
 LabelFont  = ("Helevetice", 18)
 titleLabelFont  = ("Helevetice", 18)
 wb=op.load_workbook('Excel_Sheet.xlsx')
-
 
 def row_acquisition():
     sheet = wb[date]
@@ -32,8 +30,8 @@ def cp_date():
     global w
     d=str(date_input.get())
     date = d
-    print(type(date))
-    #print(date)
+    # print(type(date))
+    # print(date)
     sheet_copy = wb.copy_worksheet(wb['Template'])
     ws = wb.worksheets[-1]
     ws.title=date
@@ -156,8 +154,9 @@ def calculation():
     if pri < 0:
         pri = 0
     # print('リスト番号：%d'%num)
-    # print('全入水量：%d'%a)
-    # print('内容積：%d'%v)
+    # print('全入水量：%f'%a)
+    # print('内容積：%f'%v)
+    # print('恒久増加量:%f'%i)
     # print('耐圧試験圧力：%d'%p)
     # print('水温：%d'%t)
     # print(beta)
@@ -169,6 +168,9 @@ def calculation():
     else:
         result='不合格'
     
+def ch_focus1(event):
+    numberEntry.focus_set()
+
 #input date    
 def page1():
     global date
@@ -198,6 +200,7 @@ def page1():
     dateEntry = ttk.Entry(frame, textvariable=date, width=30,font= LabelFont)
     date_input=dateEntry
     dateEntry.grid(row=4, column=1) 
+    dateEntry.focus_set()
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_date())
     okButton.grid(row=5, column=3)
     Page1.grid(row=0, column=0, sticky="nsew")
@@ -233,7 +236,7 @@ def page2():
     nameEntry = ttk.Entry(frame, textvariable=name, width=30,font=LabelFont)
     name_input=nameEntry
     nameEntry.grid(row=4, column=1)
-
+    nameEntry.focus_set()
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_name())
 
     okButton.grid(row=5, column=3)
@@ -248,6 +251,7 @@ def page3():
     global code_input
     global number
     global number_input
+    global numberEntry
     Page3 = tk.Frame(window)
     spaceLabel5 = [tk.Label(Page3, text="") for column in range(5)]
     titleLabel      =\
@@ -275,7 +279,8 @@ def page3():
     codeEntry = ttk.Entry(frame, textvariable=code, width=20,font=LabelFont)
     codeEntry.grid(row=2, column=1)
     code_input=codeEntry
-    
+    codeEntry.focus_set()
+    codeEntry.bind('<Return>',ch_focus1)
     numberLabelFont  = ("Helevetice", 18)
     numberLabel      = ttk.Label(frame, text="番号：", font=numberLabelFont)
     for index in range(3):
@@ -285,12 +290,11 @@ def page3():
     numberEntry = ttk.Entry(frame, textvariable=number, width=20,font=LabelFont)
     numberEntry.grid(row=4, column=1)
     number_input=numberEntry
-
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_codename())
     okButton.grid(row=5, column=3)
     Page3.grid(row=0, column=0, sticky="nsew")
-
     window.bind('<Return>',cp_codename_return)
+        
 
 #input capacity
 def page4():
@@ -298,8 +302,7 @@ def page4():
     global capacity_input
     Page4 = tk.Frame(window)
     spaceLabel8 = [tk.Label(Page4, text="") for column in range(5)]
-    titleLabel      =\
-       ttk.Label(Page4, text="内容積を入力してください。(L)", font=titleLabelFont)
+    titleLabel = ttk.Label(Page4, text="内容積を入力してください。(L)", font=titleLabelFont)
   
     for index in range(5):
         spaceLabel8[index].pack()
@@ -319,7 +322,7 @@ def page4():
     capacityEntry = ttk.Entry(frame, textvariable=capacity, width=30,font=LabelFont)
     capacity_input=capacityEntry
     capacityEntry.grid(row=4, column=1)
-
+    capacityEntry.focus_set()
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_capacity())
     okButton.grid(row=5, column=3)
 
@@ -357,7 +360,7 @@ def page5():
     tempEntry = ttk.Entry(frame, textvariable=temp, width=30,font=LabelFont)
     temp_input=tempEntry
     tempEntry.grid(row=4, column=1)
-
+    tempEntry.focus_set()
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_temp())
     okButton.grid(row=5, column=3)
 
@@ -400,8 +403,7 @@ def page6():
     amount_input=amountEntry
  
     amountEntry.grid(row=4, column=1)
-
-
+    amountEntry.focus_set()
     okButton = ttk.Button(frame, text="  次へ  ", command=lambda : cp_amount())
     okButton.grid(row=5, column=3)
 
@@ -415,7 +417,7 @@ def page7():
     global increment_input
     Page7 = tk.Frame(window)
     spaceLabel1 = [tk.Label(Page7, text="") for column in range(5)]
-    titleLabel      =ttk.Label(Page7, text="恒久増加量を入力してください。(㎤)", font=titleLabelFont)
+    titleLabel = ttk.Label(Page7, text="恒久増加量を入力してください。(㎤)", font=titleLabelFont)
   
     for index in range(5):
         spaceLabel1[index].pack()
@@ -437,9 +439,8 @@ def page7():
     increment = tk.Entry()
     incrementEntry = ttk.Entry(frame, textvariable=increment, width=30,font=LabelFont)
     increment_input=incrementEntry
- 
     incrementEntry.grid(row=4, column=1)
-
+    incrementEntry.focus_set()
     # return_Button = ttk.Button(frame, text="  戻る  ", command=lambda : cp_temp())
     # return_Button.grid(row=5, column=2)
 
