@@ -1,4 +1,5 @@
 # testapp
 
 ## exe化　　
-`pyinstaller 'ファイル名.py' --onefile --noconsole`
+`pyinstaller 'app.py' --onefile --noconsole --exclude pandas`
+
